@@ -1,0 +1,202 @@
+{
+    "openapi": "3.0.2",
+    "info": {
+        "title": "IOD Fake Store API",
+        "version": "1.0",
+        "contact": {
+            "name": "Dale",
+            "url": "https://insaneowl1993.github.io",
+            "email": "ddlambert1@hotmail.com"
+        },
+        "description": "This is a **fake** store API for the IOD course."
+    },
+    "servers": [
+        {
+            "url": "https://fakestoreapi.com"
+        }
+    ],
+    "paths": {
+        "/products": {
+            "get": {
+                "summary": "Gets all products",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "sort",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "desc",
+                                "asc"
+                            ]
+                        },
+                        "description": "Sort products in descending or ascending order"
+                    },
+                    {
+                        "in": "query",
+                        "name": "limit",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "Limit number of products"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A list of all the products",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Products"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "Product successfully created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Product"
+                                }
+                            }
+                        },
+                        "links": {
+                            "getProductByProductId": {
+                                "operationId": "getProduct",
+                                "parameters": {
+                                    "productId": "$response.body#/id"
+                                },
+                                "description": "Get product by id"
+                            }
+                        }
+                    }
+                },
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Product"
+                            },
+                            "example": {
+                                "id": 0,
+                                "title": "Apple MacBook",
+                                "price": 20000,
+                                "description": "You will either love or hate this machine",
+                                "category": "Computers",
+                                "image": "url link here",
+                                "rating": {
+                                    "rate": 4,
+                                    "count": 1
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/products/{productId}": {
+            "get": {
+                "summary": "Get a product",
+                "operationId": "getProduct",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "productId",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "required": true,
+                        "description": "Numeric id of the product"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The product",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Product"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Products": {
+                "type": "array",
+                "items": {
+                    "$ref": "#/components/schemas/Product"
+                }
+            },
+            "Product": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "price": {
+                        "type": "number"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "category": {
+                        "type": "string"
+                    },
+                    "image": {
+                        "type": "string"
+                    },
+                    "rating": {
+                        "type": "object",
+                        "properties": {
+                            "rate": {
+                                "type": "number"
+                            },
+                            "count": {
+                                "type": "integer"
+                            }
+                        },
+                        "required": [
+                            "rate",
+                            "count"
+                        ],
+                        "additionalProperties": false
+                    }
+                },
+                "additionalProperties": false,
+                "required": [
+                    "id",
+                    "title",
+                    "price",
+                    "description",
+                    "category",
+                    "image",
+                    "rating"
+                ]
+            }
+        },
+        "securitySchemes": {
+            "BasicAuth": {
+                "type": "http",
+                "scheme": "basic"
+            }
+        }
+    },
+    "security": [
+        {
+            "BasicAuth": []
+        }
+    ]
+}
